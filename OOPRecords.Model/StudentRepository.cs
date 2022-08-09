@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
+using System.IO;
 using System.Text;
 
 namespace OOPRecords.Model
@@ -33,6 +35,24 @@ namespace OOPRecords.Model
         { 
             var initializer = new Initializer();
             initializer.Seed(this); 
+        }
+        private const string fileName = @"C:\Users\firek\Documents\MetalUp\OOPRecords\OOPRecords.ConsoleUI\StudentsFile.json";
+        public void Load()
+        { 
+            using (StreamReader reader = new StreamReader(fileName))
+            { 
+                string json = reader.ReadToEnd(); 
+                Students = JsonSerializer.Deserialize<List<Student>>(json);
+            } 
+        }
+        public void SaveAll() 
+        { 
+            using (StreamWriter writer = new StreamWriter(fileName))
+            { 
+                var options = new JsonSerializerOptions { WriteIndented = true };
+                string json = JsonSerializer.Serialize(Students, options);
+                writer.Write(json); writer.Flush();
+            } 
         }
     }
 }
