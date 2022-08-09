@@ -29,12 +29,21 @@ namespace OOPRecords.Model
             var s = new Student(); s.FirstName = firstName;
             s.LastName = lastName; s.DateOfBirth = dob;
             Add(s);
+            SaveAll();
             return s; 
         }
         public StudentRepository()
-        { 
-            var initializer = new Initializer();
-            initializer.Seed(this); 
+        {
+            if (File.Exists(fileName))
+            { 
+                Load();
+            } 
+            else 
+            { 
+                var initializer = new Initializer(); 
+                initializer.Seed(this); 
+                SaveAll();
+            }
         }
         private const string fileName = @"C:\Users\firek\Documents\MetalUp\OOPRecords\OOPRecords.ConsoleUI\StudentsFile.json";
         public void Load()
