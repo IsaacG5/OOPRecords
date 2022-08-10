@@ -9,14 +9,15 @@ namespace OOPRecords.Model
 {
     public class StudentRepository
     {
-        private List<Student> Students = new List<Student>();
+        private DatabaseContext Context;
         public void Add(Student s)
         {
-            Students.Add(s);
+            Context.Students.Add(s);
+            Context.SaveChanges();
         }
         public IEnumerable<Student> AllStudents()
         {
-            return Students;
+            return Context.Students;
         }
         public IEnumerable<Student> FindStudentByLastName(string lastName)
         {
@@ -29,39 +30,11 @@ namespace OOPRecords.Model
             var s = new Student(); s.FirstName = firstName;
             s.LastName = lastName; s.DateOfBirth = dob;
             Add(s);
-            SaveAll();
             return s; 
         }
-        public StudentRepository()
+        public StudentRepository(DatabaseContext context)
         {
-            if (File.Exists(fileName))
-            { 
-                Load();
-            } 
-            else 
-            { 
-                var initializer = new Initializer(); 
-                initializer.Seed(this); 
-                SaveAll();
-            }
-        }
-        private const string fileName = @"C:\Users\firek\Documents\MetalUp\OOPRecords\OOPRecords.ConsoleUI\StudentsFile.json";
-        public void Load()
-        { 
-            using (StreamReader reader = new StreamReader(fileName))
-            { 
-                string json = reader.ReadToEnd(); 
-                Students = JsonSerializer.Deserialize<List<Student>>(json);
-            } 
-        }
-        public void SaveAll() 
-        { 
-            using (StreamWriter writer = new StreamWriter(fileName))
-            { 
-                var options = new JsonSerializerOptions { WriteIndented = true };
-                string json = JsonSerializer.Serialize(Students, options);
-                writer.Write(json); writer.Flush();
-            } 
+            Context = context;
         }
     }
 }
